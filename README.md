@@ -51,23 +51,14 @@ precision-first policy live in the
 ## Install
 
 ```sh
-dsh plugin --profile default add github:zhengqiuyang/dsh-read-guard
+dsh plugin --profile default add dsh-read-guard
 ```
 
-git installs build from source, so also authorize the build once in the
-profile's `pnpm-workspace.yaml` (treat this as "let this code run on my
-machine at install time" — pin a commit if that matters to you):
+From npm — no build step, no `allowBuilds` authorization; git installs are equally prebuilt (`lib/` ships in the repo).
 
-```yaml
-allowBuilds:
-  dsh-read-guard: true
-```
 
-Or install a prebuilt npm tarball with no build step:
 
-```sh
-dsh plugin --profile default add ./dsh-read-guard-0.1.0.tgz
-```
+
 
 ## Configure
 
