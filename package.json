@@ -1,0 +1,45 @@
+{
+  "name": "dsh-read-guard",
+  "version": "0.1.0",
+  "description": "Deterministic prompt-injection interception for DeepSeek Harness: scans what the agent READS (tool results) at the moment it enters model context",
+  "type": "module",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "files": [
+    "lib",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "prepare": "npm run build",
+    "sync": "node scripts/sync-rig-core.mjs",
+    "test": "npm run sync && npm run build && node test/run-tests.mjs"
+  },
+  "keywords": [
+    "dsh-plugin",
+    "deepseek-harness",
+    "prompt-injection",
+    "ai-agents",
+    "security"
+  ],
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^4.0.0",
+    "@deepseek-ai/schemastery": "^3.18.0"
+  },
+  "devDependencies": {
+    "@deepseek-ai/cordis": "^4.0.0",
+    "@deepseek-ai/schemastery": "^3.18.0",
+    "@types/node": "^22.10.2",
+    "typescript": "^5.7.3"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

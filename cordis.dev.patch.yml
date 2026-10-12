@@ -1,0 +1,8 @@
+# Dev overlay for loading this plugin from source into a local DSH checkout:
+#
+#   pnpm dsh web --patch C:/Users/Admin/.zcode/workspace/default/dsh-read-guard/cordis.dev.patch.yml
+#
+# (Path must stay absolute — see the "第一个插件" tutorial.)
+- insert:
+    - id: dsh-read-guard
+      name: 'C:/Users/Admin/.zcode/workspace/default/dsh-read-guard/src/index.ts'

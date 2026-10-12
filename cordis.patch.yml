@@ -1,0 +1,5 @@
+# Applied when a profile lists this bundle. The row references the package
+# name, so Node module resolution finds the installed code (lib/index.js).
+- insert:
+    - id: dsh-read-guard
+      name: dsh-read-guard
