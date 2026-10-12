@@ -48,3 +48,16 @@ export function scanToolResult(text: string, toolName: string, trust: TrustLevel
     trust,
   });
 }
+
+/** Synthesized finding for path-level credential access (content unseen). */
+export function credentialPathFinding(toolName: string, path: string): Finding {
+  return {
+    // Plugin-synthesized id, not an engine rule id.
+    ruleId: 'CRED_FILE_ACCESS' as Finding['ruleId'],
+    severity: 'high',
+    message: `credential-material file read (${path})`,
+    evidence: path.slice(0, 120),
+    location: { kind: 'event', source: `tool:${toolName}` },
+    trust: 'untrusted',
+  };
+}

@@ -29,6 +29,19 @@ export function extractText(blocks: readonly ContentBlockLike[]): string {
 const QUARANTINE_BEGIN = '<<<dsh-read-guard:quarantine-begin>>>';
 const QUARANTINE_END = '<<<dsh-read-guard:quarantine-end>>>';
 
+/**
+ * Credential-material paths: reading these into context is quarantined on
+ * the PATH alone, regardless of content. Path-level — the complement of
+ * content-pattern secret rules: the secret never reaches the model to be
+ * scanned in the first place.
+ */
+const CRED_PATH_RE =
+  /(?:^|[\\/])(?:\.env(?:\.\w+)?|\.npmrc|\.netrc|\.pypirc|id_rsa|id_ed25519|id_ecdsa|authorized_keys|kubeconfig|\.aws[\\/](?:credentials|config)|\.docker[\\/]config\.json)(?:$|[\\/])/i;
+
+export function isCredentialPath(rawPath: string): boolean {
+  return CRED_PATH_RE.test(rawPath.replace(/^[a-zA-Z]:/, '').replace(/\\/g, '/'));
+}
+
 function ruleLines(findings: Finding[]): string {
   return findings
     .slice(0, 10)

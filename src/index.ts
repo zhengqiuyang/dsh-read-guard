@@ -13,8 +13,8 @@
  */
 import type { Context } from '@deepseek-ai/cordis';
 import Schema from '@deepseek-ai/schemastery';
-import { blockFeedback, extractText, quarantineContent, type ContentBlockLike } from './content.js';
-import { decide, scanToolResult, type GuardMode } from './policy.js';
+import { blockFeedback, extractText, isCredentialPath, quarantineContent, type ContentBlockLike } from './content.js';
+import { credentialPathFinding, decide, scanToolResult, type GuardMode } from './policy.js';
 
 export const name = 'dsh-read-guard';
 
@@ -50,6 +50,7 @@ export const Config: Schema<Config> = Schema.object({
 // harness packages; identical declarations merge cleanly.
 interface ToolExecView {
   readonly name: string;
+  readonly arguments: unknown;
   readonly agent?: unknown;
 }
 
@@ -79,6 +80,18 @@ declare module '@deepseek-ai/cordis' {
 }
 
 export function apply(ctx: Context, config: Config) {
+  function argPath(args: unknown): string | undefined {
+    if (typeof args !== 'object' || args === null) return undefined;
+    const record = args as Record<string, unknown>;
+    for (const key of ['file_path', 'path']) {
+      if (typeof record[key] === 'string') return record[key] as string;
+    }
+    return undefined;
+  }
+  function isCredPathCall(exec: ToolExecView): boolean {
+    const path = argPath(exec.arguments);
+    return path !== undefined && isCredentialPath(path);
+  }
   const watched = [...config.readTools, ...config.fetchTools];
   console.log(
     `[dsh-read-guard] active: mode=${config.mode}, watching ${watched.length} tool(s): ${watched.join(', ')}`,
@@ -97,9 +110,15 @@ export function apply(ctx: Context, config: Config) {
     if (!trust) return decision;
 
     const text = extractText(result.content);
-    if (!text) return decision;
+    if (!text && !isCredPathCall(exec)) return decision;
 
     const findings = scanToolResult(text.slice(0, config.maxScanChars), exec.name, trust);
+    // Path-level gate: a credential-material file is quarantined on the path
+    // alone — its content never needs to be scanned to be refused.
+    const path = argPath(exec.arguments);
+    if (path !== undefined && isCredentialPath(path)) {
+      findings.push(credentialPathFinding(exec.name, path));
+    }
     const action = decide(findings, config.mode);
     if (action.kind === 'pass') return decision;
 

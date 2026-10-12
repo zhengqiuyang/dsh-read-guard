@@ -105,6 +105,26 @@ await test('summarize dedupes rule ids', () => {
   assert.ok(!summary.includes(', ,'), 'no duplicated ids');
 });
 
+console.log('credential paths');
+
+await test('credential paths detected by path alone', async () => {
+  const { isCredentialPath } = await import('../lib/content.js');
+  assert.equal(isCredentialPath('/home/u/.ssh/id_rsa'), true);
+  assert.equal(isCredentialPath('C:/Users/u/project/.env'), true);
+  assert.equal(isCredentialPath('C:/Users/u/.aws/credentials'), true);
+  assert.equal(isCredentialPath(String.raw`C:\Users\u\.ssh\id_ed25519`), true);
+  assert.equal(isCredentialPath('src/config.json'), false);
+  assert.equal(isCredentialPath('docs/env.md'), false);
+});
+
+await test('credential read synthesizes a high finding', async () => {
+  const { credentialPathFinding, decide } = await import('../lib/policy.js');
+  const finding = credentialPathFinding('read', '/home/u/.env');
+  assert.equal(finding.severity, 'high');
+  assert.equal(finding.ruleId, 'CRED_FILE_ACCESS');
+  assert.equal(decide([finding], 'wrap').kind, 'wrap');
+});
+
 console.log('content');
 
 await test('extractText joins only text blocks', () => {
