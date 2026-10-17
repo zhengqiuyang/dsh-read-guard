@@ -26,7 +26,7 @@ above 85★). The ones that matter, honestly:
 
 | Plugin | Architecture | What we do differently |
 |---|---|---|
-| [dsh-secure-audit](https://github.com/PensiveFei/dsh-secure-audit) (85★) | Scanning is a **model-callable tool** — the model must volunteer to call it | We intercept in the `tools/post-execute` waterfall; the model cannot bypass the scan. (Their obfuscation normalization — homoglyph/base64 — is ahead of ours; tracked in the roadmap.) |
+| [dsh-secure-audit](https://github.com/PensiveFei/dsh-secure-audit) (85★) | Scanning is a **model-callable tool** — the model must volunteer to call it | We intercept in the tools/post-execute waterfall; the model cannot bypass the scan. |
 | [dsh-defend](https://github.com/PerryLink/dsh-defend) (23★) | Same three interception points, allow/ask/block, Aho-Corasick literal patterns | Our engine is context-scoped (rules fire per trust level / surface, with corroboration requirements) rather than literal pattern lists; `wrap` mode keeps content available while taint-marked (theirs is allow/ask/block only); scan cap 200k full-text vs their 10k head-only |
 | [dsh-injection-guard](https://github.com/loeanxi/dsh-injection-guard) (2★) | Action-side taint tracking (blocks sensitive tool calls after untrusted context) | Complementary, not competing: they gate downstream actions, we sanitize upstream content. (We renamed from `dsh-inject-guard` to avoid confusion with them.) |
 
@@ -97,9 +97,6 @@ upstream; this repo tests only the adapter policy.
 
 ## Roadmap
 
-- Obfuscation resistance: zero-width/full-width/homoglyph normalization +
-  bounded base64 decoding before rules run (closing the gap to
-  dsh-secure-audit)
 - `agent/pre-step` scanning for pasted user content (deliberately out of v0:
   users are allowed to give instructions)
 - MCP-server tool surfaces as a preset trust class

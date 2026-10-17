@@ -1,6 +1,6 @@
 {
   "name": "dsh-read-guard",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Deterministic prompt-injection interception for DeepSeek Harness: scans what the agent READS (tool results) at the moment it enters model context",
   "type": "module",
   "license": "MIT",
