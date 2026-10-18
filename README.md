@@ -78,6 +78,12 @@ Override in your profile's `cordis.patch.yml`:
 Add any tool whose results the agent reads — including MCP tools (they
 dispatch through the same pipeline).
 
+## Compatibility
+
+- **DSH**: verified against the 0.2.x line (source snapshot 0.2.1-alpha.2); installs on any profile via `dsh plugin add` (prebuilt `lib/`, no build approval).
+- **Node**: >= 20 (CI matrix: Node 20/22/24 on Ubuntu and Windows).
+- **Disposable-profile evidence (2026-10-19)**: `dsh plugin --profile <fresh> add github:zhengqiuyang/dsh-read-guard` → installed in 30s; boot shows `[dsh-read-guard] active: …`; `dsh plugin --profile <fresh> remove dsh-read-guard` → dependencies cleared, bundles restored.
+
 ## Develop
 
 ```sh
