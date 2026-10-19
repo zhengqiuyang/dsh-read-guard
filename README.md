@@ -1,5 +1,6 @@
 # dsh-read-guard
 
+> **If this helps you, please give it a star** — it helps others find it. Thanks!
 Deterministic prompt-injection interception for
 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (dsh).
 
