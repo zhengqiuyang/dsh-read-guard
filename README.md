@@ -118,3 +118,12 @@ guard covering tool-result injection, or the `tools/post-execute` contract
 changes in a way that breaks content replacement, this plugin freezes at its
 last working version and the README records the postmortem. The engine moves
 to whatever runtime needs it next.
+
+## Known limitations
+
+Stated plainly, so you can decide whether this guard fits your threat model:
+
+- **Scan scope is config-driven.** Only the tools listed in `readTools` / `fetchTools` are watched (default: read/grep/glob + web_fetch/web_search). MCP tools, shell output, and other content channels are not scanned unless you add them.
+- **Text blocks only.** Non-text content blocks (images, etc.) pass through untouched; per-result scanning stops at `maxScanChars` (default 200,000).
+- **Wrap mode keeps the original text in context**, explicitly marked untrusted — it does not remove it. High-severity findings mutate the result; medium/low are report-only.
+- **One channel of many.** Blocking one tool result does not prove the model cannot receive the same content through another path.
