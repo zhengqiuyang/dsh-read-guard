@@ -109,7 +109,16 @@ export function apply(ctx: Context, config: Config) {
     const trust = trustOf.get(exec.name);
     if (!trust) return decision;
 
-    const text = extractText(result.content);
+    // Effective projection: when the waterfall produced a replacement
+    // content, THAT is what the model will see — scan and mutate it, never
+    // the raw result (which a downstream cleanup may have already fixed).
+    const effectiveContent = decision.content !== undefined
+      ? Array.isArray(decision.content)
+        ? decision.content
+        : [decision.content]
+      : result.content;
+
+    const text = extractText(effectiveContent);
     if (!text && !isCredPathCall(exec)) return decision;
 
     const findings = scanToolResult(text.slice(0, config.maxScanChars), exec.name, trust);
@@ -134,7 +143,7 @@ export function apply(ctx: Context, config: Config) {
     }
     return {
       kind: 'accept',
-      content: quarantineContent(result.content, exec.name, action.findings),
+      content: quarantineContent(effectiveContent, exec.name, action.findings),
       ...(decision.additionalContexts !== undefined
         ? { additionalContexts: decision.additionalContexts }
         : {}),
