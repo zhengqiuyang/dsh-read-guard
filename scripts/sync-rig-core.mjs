@@ -45,6 +45,12 @@ async function main() {
   for (const file of FILES) {
     const src = join(sourceRoot, file);
     if (!existsSync(src)) {
+      const vendored = join(vendorRoot, file);
+      if (existsSync(vendored)) {
+        console.warn(`sync-rig-core: no sibling checkout for ${file}; using the committed copy`);
+        results.push({ file, changed: false });
+        continue;
+      }
       console.error(`sync-rig-core: missing source ${src}`);
       console.error('Is the repo-inject-guard checkout a sibling of this plugin?');
       process.exit(1);
