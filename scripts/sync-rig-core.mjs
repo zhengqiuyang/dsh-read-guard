@@ -79,7 +79,8 @@ async function main() {
 
   if (checkOnly) {
     if (dirty) {
-      console.error('sync-rig-core: vendored copy is stale; run `npm run sync`.');
+      const changed = results.filter((r) => r.changed).map((r) => r.file);
+      console.error(`sync-rig-core: vendored copy is stale (${changed.join(', ')}); run \`npm run sync\`.`);
       process.exit(1);
     }
     console.log('sync-rig-core: vendored copy is in sync.');
